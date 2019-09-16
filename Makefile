@@ -18,7 +18,7 @@ ${ENV}:
 ${SITE_PACKAGES}: ${ENV}
 	@${IN_ENV} ${PYTHON} -m pip install -r requirements.txt
 
-${SITE_PACKAGES}/planets: ${ENV} install
+${SITE_PACKAGES}/capytcha: ${ENV} install
 
 deps: ${SITE_PACKAGES}
 
