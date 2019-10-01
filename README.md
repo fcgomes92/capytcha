@@ -1,6 +1,6 @@
 ### to run:
 ```shell
-pip install - requirements.txt
+pip install -r requirements.txt
 pip install -e ./
 ```
 
