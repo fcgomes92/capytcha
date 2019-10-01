@@ -25,12 +25,13 @@ class Settings(Singleton):
 
     def __init__(self, *args, **kwargs):
         load_dotenv()
+
         self.jwt_secret = os.environ.get(Constants.JWT_SECRET)
         self.jwt_algorithm = os.environ.get(Constants.JWT_ALGORITHM)
+
         self.image_storage = os.environ.get(Constants.IMAGE_STORAGE)
         if (self.image_storage == Constants.IMAGE_STORAGE_LOCAL):
             self.parse_storage_path()
-        
 
 
 settings = Settings()

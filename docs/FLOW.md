@@ -9,9 +9,7 @@
         - Body:
             ```json
             {
-                "user_token": "<JWT Token>",
-                "image": "<image binary>",
-                "audio": "<audio binary>"
+                "token": "<JWT Token>",
             }
             ```
         
@@ -22,8 +20,9 @@
             - Body (JSON):
                 ```json
                 {
-                    "user_token": "<JWT Token>",
-                    "value": "<user input response based on the image / audio provided>"
+                    "token": "<JWT Token>",
+                    "image": "<user input response based on the image provided>",
+                    "audio": "<user input response based on the audio provided>"
                 }
                 ```
     - Response:

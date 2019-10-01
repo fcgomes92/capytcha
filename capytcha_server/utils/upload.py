@@ -9,7 +9,7 @@ def _download_local():
     pass
 
 
-def _upload_local(token, image, audio):
+def _upload_local(image, audio):
     image_audio_id = str(uuid4())
     path = os.path.join(settings.image_storage_path,f'{image_audio_id}')
     image.save(f'{path}.png', 'png')
@@ -22,7 +22,7 @@ def _download_s3():
     pass
 
 
-def _upload_s3():
+def _upload_s3(token, image, audio):
     pass
 
 
@@ -46,5 +46,5 @@ def download_captcha(token):
 
 
 @_check_storage_mode('upload')
-def upload_captcha(token, image, audio):
+def upload_captcha(image, audio):
     pass

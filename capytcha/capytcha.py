@@ -35,7 +35,7 @@ def create_image_captcha(captcha_text):
     return image_data
 
 
-def create_audio_captcha():
+def create_audio_captcha(captcha_text):
     # Create the audio captcha with the specified voice wav file library folder.
     # Each captcha char should has it's own directory under the specified folder ( such as ./voices),
     # for example ./voices/a/a.wav will be played when the character is a.
@@ -43,7 +43,6 @@ def create_audio_captcha():
     # audio_captcha = AudioCaptcha(voicedir='./voices')
     # Create an audio captcha which use digital voice file only.
     audio_captcha = AudioCaptcha()
-    captcha_text = create_random_number()
     audio_data = audio_captcha.generate(captcha_text)
 
     # audio_file = "./captcha_"+captcha_text+'.wav'
