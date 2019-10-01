@@ -1,6 +1,7 @@
 .DS_STORE
 .vscode
 .env
+static
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
