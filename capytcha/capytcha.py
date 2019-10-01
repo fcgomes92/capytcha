@@ -19,7 +19,7 @@ def create_random_number(captcha_string_size=10):
     captcha_string_list = []
     captcha_string = ''
     for i in range(captcha_string_size):
-        captcha_string = f'{captcha_string}{random.choice(number_list)}'
+        captcha_string = f'{captcha_string}{random.choice(numbers_list)}'
     return captcha_string
 
 

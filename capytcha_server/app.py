@@ -10,6 +10,12 @@ from random import randrange
 from aiohttp import web
 from aiohttp.abc import AbstractAccessLogger
 
+from capytcha.capytcha import create_random_text, create_image_captcha, create_audio_captcha
+
+
+from capytcha_server.utils.upload import upload_captcha, download_captcha
+from capytcha_server.utils.tokens import encode_data, decode_data
+
 HOSTNAME: str = os.environ.get("HOSTNAME", "Unknown")
 
 routes = web.RouteTableDef()
@@ -32,6 +38,31 @@ async def hello(request: web.Request) -> web.Response:
 @routes.get('/health')
 async def health(request: web.Request) -> web.Response:
     return web.json_response(data={'data': 'HEALTHY'})
+
+
+@routes.post('/captcha/get')
+async def get_captcha(request: web.Request) -> web.Response:
+    """ 
+    get a new image + sound + token
+    """
+    captcha_text = create_random_text()
+    image = create_image_captcha(captcha_text)
+    audio = create_audio_captcha()
+    token = encode_data({'id': 'TEST', 'text': captcha_text}).decode()
+    resource_id = upload_captcha(token, image, audio)
+    return web.json_response(data={
+        'resource': resource_id,
+        'token': token,
+    })
+
+
+@routes.post('/captcha/check')
+async def get_captcha(request: web.Request) -> web.Response:
+    data = await request.json()
+    token_data = decode_data(data['token'])
+    if (data['value'] == token_data['text']):
+        return web.json_response(data={})
+    return web.json_response(data={}, status=400)
 
 
 class AioHttpAppException(BaseException):
