@@ -1,46 +1,28 @@
-.PHONY: deps install clean build_clean dist_clean dist docker
+.PHONY: requirements run dev env
 
 ENV=.env
 PYTHON_VERSION=3
 PYTHON=python${PYTHON_VERSION}
-SITE_PACKAGES=${ENV}/lib/${PYTHON}/site-packages
 IN_ENV=. ${ENV}/bin/activate;
 PACKAGE_VERSION=$(shell cat VERSION)
 
-default: ${ENV} deps
+default: env requirements
 
-${ENV}:
+env:
 	@echo "Creating Python environment..." >&2
 	@${PYTHON} -m venv ${ENV}
 	@echo "Updating pip..." >&2
 	@${IN_ENV} ${PYTHON} -m pip install -U pip setuptools
 
-${SITE_PACKAGES}: ${ENV}
+requirements: env
 	@${IN_ENV} ${PYTHON} -m pip install -r requirements.txt
 
-${SITE_PACKAGES}/capytcha: ${ENV} install
 
-deps: ${SITE_PACKAGES}
+run: env requirements
+	@${IN_ENV} ${PYTHON} -m pip install -e ./
+	@${IN_ENV} gunicorn -w 1 capytcha_server.app:create_app --bind 0.0.0.0:8080 --worker-class aiohttp.GunicornWebWorker
 
-install: default
-	@${IN_ENV} ${PYTHON} -m pip install -e .
 
-wheel: ${ENV}
-	@${IN_ENV} ${PYTHON} -m pip install -U wheel
-	@${IN_ENV} ${PYTHON} setup.py bdist_wheel
-
-dist: wheel
-
-dist_clean:
-	@rm -rf dist
-
-build_clean:
-	@rm -rf build
-
-clean: build_clean dist_clean
-	@rm -rf ${ENV} dist build __pycache__ *.egg-info
-
-docker_build: build_clean dist_clean wheel
-
-run: 
-	gunicorn -w 4 capytcha.app:create_app --bind 0.0.0.0:8080 --worker-class aiohttp.GunicornWebWorker
+dev: env requirements
+	@${IN_ENV} ${PYTHON} -m pip install -e ./
+	@${IN_ENV} gunicorn -w 1 capytcha_server.app:create_app --bind 0.0.0.0:8080 --worker-class aiohttp.GunicornWebWorker --reload

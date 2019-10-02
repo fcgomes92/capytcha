@@ -10,12 +10,12 @@ from random import randrange
 from aiohttp import web
 from aiohttp.abc import AbstractAccessLogger
 
-from capytcha.capytcha import create_random_text, create_image_captcha, create_audio_captcha, create_random_number
-
-
-from capytcha_server.utils.upload import upload_captcha, download_captcha
-from capytcha_server.utils.tokens import encode_data, decode_data
-from capytcha_server.exceptions import AioHttpAppException, GracefulExitException, ResetException
+from capytcha.capytcha import (create_audio_captcha, create_image_captcha,
+                               create_random_number, create_random_text)
+from capytcha_server.exceptions import (AioHttpAppException,
+                                        GracefulExitException, ResetException)
+from capytcha_server.utils.tokens import decode_data, encode_data
+from capytcha_server.utils.upload import download_captcha, upload_captcha
 
 HOSTNAME: str = os.environ.get("HOSTNAME", "Unknown")
 
@@ -98,6 +98,8 @@ def cancel_tasks() -> None:
         task.cancel()
 
 # TODO: add auth
+
+
 async def create_app():
     """Run the application
     Return whether the application should restart or not.

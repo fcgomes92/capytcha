@@ -24,10 +24,5 @@ setup(
     packages=find_packages('./'),
     package_dir={'': './'},
     py_modules=['capytcha_server', 'capytcha'],
-    include_package_data=True,
-    entry_points={
-        'console_scripts': [
-            'capytcha-server=capytcha_server.app:main',
-        ]
-    }
+    include_package_data=True
 )
