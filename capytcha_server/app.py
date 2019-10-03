@@ -3,12 +3,10 @@ import logging
 import os
 import signal
 import sys
-from concurrent.futures import CancelledError
 from datetime import datetime
 from random import randrange
 
 from aiohttp import web
-from aiohttp.abc import AbstractAccessLogger
 
 from capytcha.capytcha import (create_audio_captcha, create_image_captcha,
                                create_random_number, create_random_text)
@@ -16,33 +14,12 @@ from capytcha_server.exceptions import (AioHttpAppException,
                                         GracefulExitException, ResetException)
 from capytcha_server.routes.captcha import captcha_routes
 from capytcha_server.routes.public import public_routes
+from capytcha_server.utils.handlers import (cancel_tasks, handle_sighup,
+                                            handle_sigterm)
 from capytcha_server.utils.tokens import decode_data, encode_data
 from capytcha_server.utils.upload import download_captcha, upload_captcha
 
 HOSTNAME: str = os.environ.get("HOSTNAME", "Unknown")
-
-
-class AccessLogger(AbstractAccessLogger):
-
-    def log(self, request, response, time):
-        self.logger.info(f'{request.remote} '
-                         f'"{request.method} {request.path} '
-                         f'done in {time}s: {response.status}')
-
-
-def handle_sighup() -> None:
-    logging.warning("Received SIGHUP")
-    raise ResetException("Application reset requested via SIGHUP")
-
-
-def handle_sigterm() -> None:
-    logging.warning("Received SIGTERM")
-    raise ResetException("Application exit requested via SIGTERM")
-
-
-def cancel_tasks() -> None:
-    for task in asyncio.Task.all_tasks():
-        task.cancel()
 
 
 def assign_routes(app):
