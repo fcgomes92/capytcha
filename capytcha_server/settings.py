@@ -2,6 +2,7 @@ import os
 
 from capytcha_server.utils.singleton import Singleton
 from pymodm.connection import connect
+from capytcha_server.models.user import User
 
 
 class Constants:
@@ -13,18 +14,17 @@ class Constants:
     IMAGE_STORAGE = 'IMAGE_STORAGE'
     IMAGE_STORAGE_LOCAL = 'LOCAL'
     IMAGE_STORAGE_S3 = 'S3'
-
     IMAGE_STORAGE_PATH = 'IMAGE_STORAGE_PATH'
 
-    DB_CON = 'DB_CON'
+    MONGODB_URI = 'MONGODB_URI'
 
 
 class Settings(Singleton):
     jwt_secret = None
 
     def configure_db(self):
-        self.db_con = os.environ.get(Constants.DB_CON)
-        self.database = connect(self.db_con, alias=self.app_name)
+        self.mongodb_uri = os.environ.get(Constants.MONGODB_URI)
+        connect(self.mongodb_uri)
 
     def parse_storage_path(self):
         path = os.environ.get(Constants.IMAGE_STORAGE_PATH)
@@ -35,9 +35,13 @@ class Settings(Singleton):
         self.jwt_secret = os.environ.get(Constants.JWT_SECRET)
         self.jwt_algorithm = os.environ.get(Constants.JWT_ALGORITHM)
 
+        self.server_date_format = '%Y-%m-%d %H:%M:%S'
+
         self.image_storage = os.environ.get(Constants.IMAGE_STORAGE)
         if (self.image_storage == Constants.IMAGE_STORAGE_LOCAL):
             self.parse_storage_path()
+
+        self.configure_db()
 
 
 settings = Settings()

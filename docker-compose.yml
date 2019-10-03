@@ -2,12 +2,22 @@ version: "3.2"
 
 services:
   mongo:
+    container_name: mongo
     image: mongo
+    ports:
+      - 27017:27017
     environment:
       MONGO_INITDB_ROOT_USERNAME: root
       MONGO_INITDB_ROOT_PASSWORD: qwe123
+      MONGO_INITDB_DATABASE: capytcha
+      MONGO_INITDB_USERNAME: admin
+      MONGO_INITDB_PASSWORD: admin
+    volumes:
+      - ./container/scripts:/docker-entrypoint-initdb.d
+    command: --auth
 
   mongo-express:
+    container_name: mongo-express
     image: mongo-express
     restart: always
     ports:
@@ -17,6 +27,7 @@ services:
       ME_CONFIG_MONGODB_ADMINPASSWORD: qwe123
 
   app:
+    container_name: capytcha
     build: .
     depends_on:
       - mongo
@@ -26,8 +37,8 @@ services:
       JWT_ALGORITHM: "HS256"
       IMAGE_STORAGE: "LOCAL" # or S3
       IMAGE_STORAGE_PATH: "./static"
-      DB_CON: "mongodb://mongo:27017/capytcha"
-      APP_NAME: 'capytcha'
+      MONGODB_URI: "mongodb://admin:admin@mongo:27017/capytcha"
+      APP_NAME: "capytcha"
     volumes:
       - ./:/app
       - /app/.env
