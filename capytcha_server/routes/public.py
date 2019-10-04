@@ -7,7 +7,6 @@ public_routes = web.RouteTableDef()
 
 @public_routes.get('/')
 async def hello(request: web.Request) -> web.Response:
-    timestamp = datetime.now().isoformat()
     return web.json_response(data={})
 
 

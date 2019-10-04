@@ -43,5 +43,8 @@ class Settings(Singleton):
 
         self.configure_db()
 
+        self.authorization_header = 'authorization'
+        self.authorization_scheme = 'Bearer'
+
 
 settings = Settings()

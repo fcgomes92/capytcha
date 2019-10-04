@@ -13,6 +13,7 @@ from capytcha.capytcha import (create_audio_captcha, create_image_captcha,
 from capytcha_server.exceptions import (AioHttpAppException,
                                         GracefulExitException, ResetException)
 from capytcha_server.routes.captcha import captcha_routes
+from capytcha_server.routes.client import client_routes
 from capytcha_server.routes.public import public_routes
 from capytcha_server.utils.handlers import (cancel_tasks, handle_sighup,
                                             handle_sigterm)
@@ -23,8 +24,9 @@ HOSTNAME: str = os.environ.get("HOSTNAME", "Unknown")
 
 
 def assign_routes(app):
-    app.router.add_routes(captcha_routes)
     app.router.add_routes(public_routes)
+    app.router.add_routes(captcha_routes)
+    app.router.add_routes(client_routes)
     return app
 
 

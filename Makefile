@@ -25,4 +25,4 @@ run: env requirements
 
 dev: env requirements
 	@${IN_ENV} ${PYTHON} -m pip install -e ./
-	@${IN_ENV} gunicorn -w 1 capytcha_server.app:create_app --bind 0.0.0.0:8080 --worker-class aiohttp.GunicornWebWorker --reload
+	@${IN_ENV} gunicorn -w 1 capytcha_server.app:create_app --bind 0.0.0.0:8080 --worker-class aiohttp.GunicornWebWorker --reload --access-logfile - --log-level debug

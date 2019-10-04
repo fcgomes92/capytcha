@@ -4,3 +4,4 @@ aiohttp
 gunicorn
 pyjwt
 pymodm
+serpy

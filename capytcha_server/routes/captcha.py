@@ -32,7 +32,7 @@ async def get_captcha(request: web.Request) -> web.Response:
 
 # TODO: add auth
 @captcha_routes.post('/captcha/check')
-async def get_captcha(request: web.Request) -> web.Response:
+async def check_captcha(request: web.Request) -> web.Response:
     """
     body: {
         "token": "<JWT Token>",
