@@ -4,10 +4,10 @@ from aiohttp import web
 from jwt.exceptions import DecodeError
 from pymodm.errors import DoesNotExist
 
+from capytcha_server.models.client import Client
+from capytcha_server.models.user import User
 from capytcha_server.settings import settings
 from capytcha_server.utils.tokens import decode_data, encode_data
-from capytcha_server.models.user import User
-from capytcha_server.models.client import Client
 
 
 def get_auth_header(request):
@@ -25,14 +25,14 @@ def get_auth_header(request):
     return [scheme, token]
 
 
-async def check_auth_token(token, scheme=None):
+async def check_auth_token(token, scheme=None, model=User, field='email'):
     try:
         data = decode_data(token)
 
-        email = data.get('email', None)
-        if not email:
+        auth_reference = data.get(field, None)
+        if not auth_reference:
             raise ValueError('invalid_token')
-        user = User.objects.get({'email': email})
+        user = model.objects.get({field: auth_reference})
         return [True, user]
     except (DecodeError, DoesNotExist):
         raise ValueError('invalid_token')
@@ -51,25 +51,13 @@ def require_authentication(f):
     return wrapped
 
 
-async def check_client_auth_token(token, scheme=None):
-    try:
-        data = decode_data(token)
-        login = data.get('login', None)
-        if not login:
-            raise ValueError('invalid_token')
-        client = Client.objects.get({'login': login})
-        return [True, client]
-    except (DecodeError, DoesNotExist):
-        raise ValueError('invalid_token')
-
-
 def require_client_authentication(f):
     @wraps(f)
     async def wrapped(request, *args, **kwargs):
         try:
             [scheme, token] = get_auth_header(request)
-            [authenticated, client] = await check_client_auth_token(token, scheme=scheme)
-            request['client'] = client
+            [authenticated, user] = await check_auth_token(token, model=Client, field='login')
+            request['user'] = user
             return await f(request, *args)
         except ValueError as ve:
             return web.json_response(data={'code': str(ve)}, status=401)
