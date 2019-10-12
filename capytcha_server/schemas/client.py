@@ -1,9 +1,9 @@
 import serpy
 
-from capytcha_server.schemas.application import ClientApplicationSchema
+from capytcha_server.schemas.application import ApplicationSchema
 
 
 class ClientProfileSchema(serpy.Serializer):
     name = serpy.Field(required=False)
     login = serpy.Field(required=False)
-    applications = ClientApplicationSchema(many=True)
+    applications = ApplicationSchema(many=True)
